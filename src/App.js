@@ -6,6 +6,7 @@ import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
 import myEpicGame from './utils/MyEpicGame.json';
 import { ethers } from 'ethers';
 import Arena from './Components/Arena';
+import LoadingIndicator from './Components/LoadingIndicator';
 
 // Constants
 const TWITTER_HANDLE = '_buildspace';
@@ -14,7 +15,10 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   // State
   const [currentAccount, setCurrentAccount] = useState(null);
+
 const [characterNFT, setCharacterNFT] = useState(null);
+
+const [isLoading, setIsLoading] = useState(false);
   // Actions
   const checkIfWalletIsConnected = async () => {
     try {
@@ -22,6 +26,10 @@ const [characterNFT, setCharacterNFT] = useState(null);
 
       if (!ethereum) {
         console.log('Make sure you have MetaMask!');
+        /*
+         * We set isLoading here because we use return in the next line
+         */
+        setIsLoading(false);
         return;
       } else {
         console.log('We have the ethereum object', ethereum);
@@ -39,13 +47,19 @@ const [characterNFT, setCharacterNFT] = useState(null);
     } catch (error) {
       console.log(error);
     }
+    /*
+     * We release the state property after all the function logic
+     */
+    setIsLoading(false);
   };
 
   // Render Methods
   const renderContent = () => {
-    /*
-     * Scenario #1
-     */
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
     if (!currentAccount) {
       return (
         <div className="connect-wallet-container">
@@ -103,6 +117,7 @@ const [characterNFT, setCharacterNFT] = useState(null);
   };
 
   useEffect(() => {
+      setIsLoading(true);
     checkIfWalletIsConnected();
   }, []);
 
@@ -128,6 +143,7 @@ useEffect(() => {
     } else {
       console.log('No character NFT found');
     }
+     setIsLoading(false);
   };
 
   /*

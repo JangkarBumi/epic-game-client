@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { CONTRACT_ADDRESS, transformCharacterData } from '../../constants';
 import myEpicGame from '../../utils/MyEpicGame.json';
 import './Arena.css';
+import LoadingIndicator from '../LoadingIndicator';
 
 /*
  * We pass in our characterNFT metadata so we can a cool card in our UI
@@ -13,6 +14,8 @@ const Arena = ({ characterNFT,setCharacterNFT }) => {
   const [boss, setBoss] = useState(null);
 
 const [attackState, setAttackState] = useState('');
+
+const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const { ethereum } = window;
@@ -80,10 +83,18 @@ const runAttackAction = async () => {
     if (gameContract) {
       setAttackState('attacking');
       console.log('Attacking boss...');
-      const attackTxn = await gameContract.attackBoss();
-      await attackTxn.wait();
-      console.log('attackTxn:', attackTxn);
+      const txn = await gameContract.attackBoss();
+      await txn.wait();
+      console.log(txn);
       setAttackState('hit');
+
+      /*
+       * Set your toast state to true and then false 5 seconds later
+       */
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 5000);
     }
   } catch (error) {
     console.error('Error attacking boss:', error);
@@ -93,10 +104,17 @@ const runAttackAction = async () => {
 
   return (
     <div className="arena-container">
-      {/* Replace your Boss UI with this */}
+      {/* Add your toast HTML right here */}
+      {boss && characterNFT && (
+        <div id="toast" className={showToast ? 'show' : ''}>
+          <div id="desc">{`💥 ${boss.name} was hit for ${characterNFT.attackDamage}!`}</div>
+        </div>
+      )}
+
+      {/* Boss */}
       {boss && (
         <div className="boss-container">
-          <div className={`boss-content ${attackState}`}>
+          <div className={`boss-content  ${attackState}`}>
             <h2>🔥 {boss.name} 🔥</h2>
             <div className="image-content">
               <img src={boss.imageURI} alt={`Boss ${boss.name}`} />
@@ -111,6 +129,12 @@ const runAttackAction = async () => {
               {`💥 Attack ${boss.name}`}
             </button>
           </div>
+          {attackState === 'attacking' && (
+            <div className="loading-indicator">
+              <LoadingIndicator />
+              <p>Attacking ⚔️</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -136,6 +160,10 @@ const runAttackAction = async () => {
               </div>
             </div>
           </div>
+          {/* <div className="active-players">
+          <h2>Active Players</h2>
+          <div className="players-list">{renderActivePlayersList()}</div>
+        </div> */}
         </div>
       )}
     </div>
