@@ -64,7 +64,7 @@ const [isLoading, setIsLoading] = useState(false);
       return (
         <div className="connect-wallet-container">
           <img
-            src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
+            src="https://64.media.tumblr.com/b333a140e247134a80af77c516f985ff/tumblr_mlqj4mtRw61qda125o6_r1_250.gifv"
             alt="Monty Python Gif"
           />
           <button
@@ -159,8 +159,8 @@ useEffect(() => {
    <div className="App">
      <div className="container">
        <div className="header-container">
-         <p className="header gradient-text">⚔️ Metaverse Slayer ⚔️</p>
-         <p className="sub-text">Team up to protect the Metaverse!</p>
+         <p className="header gradient-text">⚔️ Sauron Slayer ⚔️</p>
+         <p className="sub-text">Team up to protect the Middle Earth!</p>
          {/* This is where our button and image code used to be!
           *	Remember we moved it into the render method.
           */}
